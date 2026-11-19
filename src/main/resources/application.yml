@@ -2,6 +2,18 @@ spring:
   application:
     name: smart-task-manager
 
+  # Values can be overridden with environment variables, e.g. DB_URL=...
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/taskmanager}
+    username: ${DB_USERNAME:taskmanager}
+    password: ${DB_PASSWORD:taskmanager}
+
+  jpa:
+    # Flyway owns the schema; Hibernate only checks that entities match it.
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
 server:
   port: 8080
 
