@@ -10,10 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,9 +56,16 @@ class TaskApiIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("DONE"));
-
+        //patch
+        mockMvc.perform(patch("/api/tasks/{id}/status", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"status": "IN_PROGRESS"}
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
         // List with a status filter
-        mockMvc.perform(get("/api/tasks").param("status", "DONE"))
+        mockMvc.perform(get("/api/tasks").param("status", "IN_PROGRESS"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[?(@.id == %d)]".formatted(id)).exists());
 

@@ -6,7 +6,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,6 +36,16 @@ class TaskControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value("Validation failed"))
                 .andExpect(jsonPath("$.errors.title").exists());
+    }
+    @Test
+    void updateStatusReturns400WhenStatusIsMissing() throws Exception {
+        mockMvc.perform(patch("/api/tasks/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {}
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.status").exists());
     }
 
     @Test

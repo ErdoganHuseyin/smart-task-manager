@@ -2,6 +2,7 @@ package com.erdoganhuseyin.taskmanager.task;
 
 import com.erdoganhuseyin.taskmanager.task.dto.CreateTaskRequest;
 import com.erdoganhuseyin.taskmanager.task.dto.TaskResponse;
+import com.erdoganhuseyin.taskmanager.task.dto.UpdateStatusRequest;
 import com.erdoganhuseyin.taskmanager.task.dto.UpdateTaskRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +55,16 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    @Transactional
+    public TaskResponse updateStatus(Long id, UpdateStatusRequest request) {
+        Task task = getTask(id);
+        task.setStatus(request.status());
+        return TaskResponse.from(taskRepository.saveAndFlush(task));
+    }
+
     private Task getTask(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
+
+
 }
