@@ -39,13 +39,13 @@ class TaskControllerTest {
     }
     @Test
     void updateStatusReturns400WhenStatusIsMissing() throws Exception {
-        mockMvc.perform(patch("/api/tasks/1/status")          // ① POST değil PATCH, adres de farklı
+        mockMvc.perform(patch("/api/tasks/1/status")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                             {}
-                            """))                         // ② status alanı hiç yok
-                .andExpect(status().isBadRequest())           // ③ yine 400 bekliyoruz
-                .andExpect(jsonPath("$.errors.status").exists()); // bu sefer hata status alanında
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.status").exists());
     }
 
     @Test

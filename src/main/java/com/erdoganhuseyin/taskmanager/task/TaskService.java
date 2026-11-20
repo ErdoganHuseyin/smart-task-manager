@@ -55,18 +55,16 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    @Transactional
+    public TaskResponse updateStatus(Long id, UpdateStatusRequest request) {
+        Task task = getTask(id);
+        task.setStatus(request.status());
+        return TaskResponse.from(taskRepository.saveAndFlush(task));
+    }
+
     private Task getTask(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
 
-    @Transactional
-    public TaskResponse updateStatus(Long id, UpdateStatusRequest request) {
-        Task task = getTask(id);
-        task.setStatus(request.getStatus());
-        return TaskResponse.from(taskRepository.saveAndFlush(task));
 
-        // 1. görevi bul (sınıfta bunun için hazır bir private metot var)
-        // 2. status'unu değiştir
-        // 3. kaydet ve TaskResponse döndür (update metoduna bak)
-    }
 }
