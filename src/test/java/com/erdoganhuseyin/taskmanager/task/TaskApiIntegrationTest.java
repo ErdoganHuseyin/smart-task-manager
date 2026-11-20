@@ -56,9 +56,16 @@ class TaskApiIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("DONE"));
-        mockMvc.perform(patch("/api/tasks/{id}",id)).andExpect(status().isOk()).andExpect(jsonPath("$.title").value("status değişti"));
+        //patch
+        mockMvc.perform(patch("/api/tasks/{id}/status", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"status": "IN_PROGRESS"}
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
         // List with a status filter
-        mockMvc.perform(get("/api/tasks").param("status", "DONE"))
+        mockMvc.perform(get("/api/tasks").param("status", "IN_PROGRESS"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[?(@.id == %d)]".formatted(id)).exists());
 
