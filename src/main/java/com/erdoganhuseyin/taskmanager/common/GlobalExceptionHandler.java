@@ -1,5 +1,7 @@
 package com.erdoganhuseyin.taskmanager.common;
 
+import com.erdoganhuseyin.taskmanager.auth.EmailAlreadyUsedException;
+import com.erdoganhuseyin.taskmanager.auth.InvalidCredentialsException;
 import com.erdoganhuseyin.taskmanager.task.InvalidSortException;
 import com.erdoganhuseyin.taskmanager.task.TaskNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -37,5 +39,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidSortException.class)
     public ProblemDetail handleInvalidSort(InvalidSortException ex){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    public ProblemDetail handleEmailAlreadyUsed(EmailAlreadyUsedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 }

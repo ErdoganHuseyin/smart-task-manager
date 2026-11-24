@@ -1,12 +1,16 @@
 package com.erdoganhuseyin.taskmanager.task;
 
+import com.erdoganhuseyin.taskmanager.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -37,6 +41,11 @@ public class Task {
 
     private Instant dueDate;
 
+    // Many tasks belong to one user. LAZY: the user row is loaded only if we actually call getOwner().
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    private User owner;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -47,7 +56,8 @@ public class Task {
         // Required by JPA
     }
 
-    public Task(String title, String description, TaskPriority priority, Instant dueDate) {
+    public Task(User owner, String title, String description, TaskPriority priority, Instant dueDate) {
+        this.owner = owner;
         this.title = title;
         this.description = description;
         if (priority != null) {
@@ -75,6 +85,7 @@ public class Task {
     public Instant getDueDate() { return dueDate; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public User getOwner() { return owner; }
 
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }
