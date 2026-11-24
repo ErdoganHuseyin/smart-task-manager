@@ -22,3 +22,10 @@ management:
     web:
       exposure:
         include: health,info
+
+app:
+  jwt:
+    # In production, ALWAYS set JWT_SECRET to a long random value (at least 32 bytes).
+    # The default below is for local development only.
+    secret: ${JWT_SECRET:local-dev-secret-change-me-0123456789abcdef}
+    expiration: ${JWT_EXPIRATION:1h}
