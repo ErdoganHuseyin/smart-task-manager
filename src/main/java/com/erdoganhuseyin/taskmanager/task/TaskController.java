@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
 
     private final TaskService taskService;
+    private static final Set<String> SORTABLE_FIELDS =
+            Set.of("title", "status", "priority", "dueDate", "createdAt", "updatedAt");
 
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
@@ -30,6 +33,12 @@ public class TaskController {
     public Page<TaskResponse> list(
             @RequestParam(required = false) TaskStatus status,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        for (Sort.Order order : pageable.getSort()) {
+            String property = order.getProperty();
+            if (!SORTABLE_FIELDS.contains(property)) {
+                throw new InvalidSortException(property);
+            }
+        }
         return taskService.findAll(status, pageable);
     }
 

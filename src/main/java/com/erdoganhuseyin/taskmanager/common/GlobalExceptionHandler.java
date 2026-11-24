@@ -1,8 +1,7 @@
 package com.erdoganhuseyin.taskmanager.common;
 
+import com.erdoganhuseyin.taskmanager.task.InvalidSortException;
 import com.erdoganhuseyin.taskmanager.task.TaskNotFoundException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,8 +34,8 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler({PropertyReferenceException.class , InvalidDataAccessApiUsageException.class})
+    @ExceptionHandler(InvalidSortException.class)
     public ProblemDetail handleInvalidSort(Exception ex){
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,"Invalid sort parameter");
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,ex.getMessage());
     }
 }
