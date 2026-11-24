@@ -75,4 +75,10 @@ class TaskApiIntegrationTest {
         mockMvc.perform(get("/api/tasks/{id}", id))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void  listReturns400WhenSortPropertyIsInvalid() throws Exception{
+        mockMvc.perform(get("/api/tasks").param("sort","foo"))
+                .andExpect(status().isBadRequest());
+    }
 }
