@@ -60,8 +60,8 @@ class TaskApiIntegrationTest {
         mockMvc.perform(patch("/api/tasks/{id}/status", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {"status": "IN_PROGRESS"}
-                            """))
+                                {"status": "IN_PROGRESS"}
+                                """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
         // List with a status filter
@@ -74,5 +74,13 @@ class TaskApiIntegrationTest {
                 .andExpect(status().isNoContent());
         mockMvc.perform(get("/api/tasks/{id}", id))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void listReturns400WhenSortPropertyIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/tasks").param("sort", "foo"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/tasks").param("sort", "[\"string\"]")).
+                andExpect(status().isBadRequest());
     }
 }
