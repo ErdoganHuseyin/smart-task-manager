@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(InvalidSortException.class)
-    public ProblemDetail handleInvalidSort(Exception ex){
+    public ProblemDetail handleInvalidSort(InvalidSortException ex){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,ex.getMessage());
     }
 }
