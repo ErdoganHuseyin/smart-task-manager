@@ -1,20 +1,24 @@
 package com.erdoganhuseyin.taskmanager.auth;
 
 import com.erdoganhuseyin.taskmanager.TestcontainersConfiguration;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,6 +75,33 @@ class AuthApiIntegrationTest {
         mockMvc.perform(login(randomEmail(), "secret-password"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.detail").value("Invalid email or password"));
+    }
+
+    @Test
+    void meReturnsCurrentUserWhenTokenIsValid() throws Exception {
+        String email = randomEmail();
+        mockMvc.perform(register(email, "secret-password"))
+                .andExpect(status().isCreated());
+        String body = mockMvc.perform(login(email, "secret-password"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        String token = JsonPath.read(body, "$.accessToken");
+
+        mockMvc.perform(get("/api/auth/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(email));
+    }
+
+    @Test
+    void meReturns401WithoutToken() throws Exception {
+        mockMvc.perform(get("/api/auth/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void meReturns401WithInvalidToken() throws Exception {
+        mockMvc.perform(get("/api/auth/me").header(HttpHeaders.AUTHORIZATION, "Bearer bu-gecerli-bir-token-degil"))
+                .andExpect(status().isUnauthorized());
     }
 
     private static String randomEmail() {
