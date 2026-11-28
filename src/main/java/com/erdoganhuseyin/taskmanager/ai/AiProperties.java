@@ -16,6 +16,11 @@ import java.time.ZoneId;
 @ConfigurationProperties(prefix = "app.ai")
 public record AiProperties(String apiKey, String model, ZoneId timeZone, boolean fallbacks) {
 
+    /** Haiku models have no server-side fallback: sending "fallbacks" to them is rejected (HTTP 400). */
+    public boolean useFallbacks() {
+        return fallbacks && model != null && !model.startsWith("claude-haiku");
+    }
+
     public boolean hasApiKey() {
         return apiKey != null && !apiKey.isBlank();
     }

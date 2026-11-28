@@ -90,7 +90,7 @@ public class ClaudeAiClient implements AiClient {
                 .system(SUMMARY_SYSTEM_PROMPT)
                 .outputConfig(OutputConfig.builder().effort(OutputConfig.Effort.LOW).build())
                 .addUserMessage("Current time: " + now.format(NOW_FORMAT) + "\n\nTasks:\n" + taskList);
-        if (properties.fallbacks()) {
+        if (properties.useFallbacks()) {
             builder.putAdditionalHeader("anthropic-beta", FALLBACK_BETA)
                     .putAdditionalBodyProperty("fallbacks", JsonValue.from("default"));
         }
@@ -114,7 +114,7 @@ public class ClaudeAiClient implements AiClient {
      * on a recommended fallback model instead of returning the refusal. It needs a beta header.
      */
     private void addFallbacks(StructuredMessageCreateParams.Builder<?> builder) {
-        if (properties.fallbacks()) {
+        if (properties.useFallbacks()) {
             builder.putAdditionalHeader("anthropic-beta", FALLBACK_BETA)
                     .putAdditionalBodyProperty("fallbacks", JsonValue.from("default"));
         }

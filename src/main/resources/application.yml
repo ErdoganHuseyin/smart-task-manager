@@ -36,4 +36,5 @@ app:
     api-key: ${ANTHROPIC_API_KEY:}
     model: ${AI_MODEL:claude-opus-5-5}
     time-zone: ${AI_TIME_ZONE:Europe/Istanbul}
-    fallbacks: true
+    # Ignored for Haiku models, which do not support server-side fallbacks.
+    fallbacks: ${AI_FALLBACKS:true}
