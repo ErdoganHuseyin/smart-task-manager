@@ -55,7 +55,7 @@ class TaskControllerTest {
                         .content("""
                                 {}
                                 """))
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.status").exists());
     }
 
