@@ -1,0 +1,7 @@
+# Shell scripts must keep Unix (LF) line endings, even on Windows,
+# otherwise they fail inside Docker and on the Linux CI runner.
+mvnw text eol=lf
+*.sh text eol=lf
+
+# Windows scripts keep Windows (CRLF) line endings.
+*.cmd text eol=crlf

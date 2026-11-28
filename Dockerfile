@@ -6,6 +6,9 @@ WORKDIR /workspace
 # Docker reuses this cached layer and does not download dependencies again.
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
+# On Windows, Git may check out mvnw with CRLF line endings, which Linux cannot run.
+# Strip the \r characters and make sure the script is executable.
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 RUN ./mvnw -B -q dependency:go-offline
 
 # Now the source code (changes often, so it comes last).
