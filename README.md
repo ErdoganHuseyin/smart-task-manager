@@ -1,5 +1,7 @@
 # Smart Task Manager
 
+[![CI](https://github.com/ErdoganHuseyin/smart-task-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/ErdoganHuseyin/smart-task-manager/actions/workflows/ci.yml)
+
 An AI-powered task management REST API built with **Java 21** and **Spring Boot 4**.
 
 Users can manage their tasks through a secure REST API, and create tasks from plain
