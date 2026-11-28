@@ -1,5 +1,7 @@
 package com.erdoganhuseyin.taskmanager.common;
 
+import com.erdoganhuseyin.taskmanager.ai.AiUnavailableException;
+import com.erdoganhuseyin.taskmanager.ai.AiUnusableAnswerException;
 import com.erdoganhuseyin.taskmanager.auth.EmailAlreadyUsedException;
 import com.erdoganhuseyin.taskmanager.auth.InvalidCredentialsException;
 import com.erdoganhuseyin.taskmanager.task.InvalidSortException;
@@ -49,5 +51,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(AiUnavailableException.class)
+    public ProblemDetail handleAiUnavailable(AiUnavailableException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
+    @ExceptionHandler(AiUnusableAnswerException.class)
+    public ProblemDetail handleAiUnusableAnswer(AiUnusableAnswerException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, ex.getMessage());
     }
 }

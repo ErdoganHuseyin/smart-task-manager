@@ -29,3 +29,12 @@ app:
     # The default below is for local development only.
     secret: ${JWT_SECRET:local-dev-secret-change-me-0123456789abcdef}
     expiration: ${JWT_EXPIRATION:1h}
+
+  ai:
+    # Your own key from console.anthropic.com. NEVER write it here: set the environment variable.
+    # Without a key the app still runs; only the AI endpoints answer 503.
+    api-key: ${ANTHROPIC_API_KEY:}
+    model: ${AI_MODEL:claude-opus-5-5}
+    time-zone: ${AI_TIME_ZONE:Europe/Istanbul}
+    # Ignored for Haiku models, which do not support server-side fallbacks.
+    fallbacks: ${AI_FALLBACKS:true}
