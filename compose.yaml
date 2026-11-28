@@ -1,4 +1,6 @@
-# Local PostgreSQL for development: docker compose up -d
+# Local development:
+#   docker compose up -d                      -> only PostgreSQL (run the app from IntelliJ)
+#   docker compose --profile app up --build   -> PostgreSQL + the app in a container
 services:
   postgres:
     image: postgres:17-alpine
@@ -10,6 +12,26 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskmanager -d taskmanager"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    profiles: [app]
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Inside Docker, "localhost" is the container itself; the database is reachable by its service name.
+      DB_URL: jdbc:postgresql://postgres:5432/taskmanager
+      # Taken from your shell or a .env file next to this file (.env is git-ignored). Empty = AI answers 503.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-claude-haiku-5-5}
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres-data:

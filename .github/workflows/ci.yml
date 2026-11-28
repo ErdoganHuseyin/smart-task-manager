@@ -41,3 +41,29 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports/
+
+  # Checks that the Docker image builds and that the app really starts in it.
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Build the image and start the app with PostgreSQL
+        run: docker compose --profile app up -d --build
+
+      - name: Wait until /actuator/health answers UP
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8080/actuator/health | grep -q '"UP"'; then
+              echo "App is healthy"; exit 0
+            fi
+            sleep 3
+          done
+          echo "App did not become healthy"; docker compose --profile app logs app; exit 1
+
+      - name: Stop containers
+        if: always()
+        run: docker compose --profile app down
