@@ -39,6 +39,17 @@ docker compose up -d
 
 On Windows, use `mvnw.cmd` instead of `./mvnw`.
 
+### Run everything in Docker
+
+No JDK needed, only Docker. This builds the app image and starts it together with PostgreSQL:
+
+```bash
+docker compose --profile app up --build
+```
+
+To enable the AI endpoints, put `ANTHROPIC_API_KEY=...` in a `.env` file next to `compose.yaml`
+(it is git-ignored) or export it in your shell first. Without a key, the AI endpoints answer 503.
+
 - API docs (Swagger UI): http://localhost:8080/swagger-ui.html
 - Health check: http://localhost:8080/actuator/health
 
