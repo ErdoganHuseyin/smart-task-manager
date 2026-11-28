@@ -35,6 +35,8 @@ public class ClaudeAiClient implements AiClient {
             The user usually writes in Turkish. Keep the title and description in the user's language.
             The title is short, like a to-do item ("Dişçi randevusu"), not a copy of the whole sentence.
             Put any remaining useful details in the description.
+            Do not repeat the title in the description. If the sentence has no new information beyond the title, use an empty string.
+            Dates and times are already stored in dueDate, so do not put them in the description.
             Resolve relative times ("yarın", "cuma", "haftaya") against the current time given in the message.
             In everyday Turkish, an hour from 1 to 7 without "sabah" usually means the afternoon (saat 3 = 15:00).
             """;
