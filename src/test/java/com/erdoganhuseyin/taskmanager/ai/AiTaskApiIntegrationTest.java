@@ -15,22 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * The AI endpoints, end to end, with a real database but a FAKE AiClient.
- *
+ * <p>
  * {@code @MockitoBean} swaps the real ClaudeAiClient for a Mockito mock inside the Spring context.
  * We decide what "Claude" answers, so the tests are free, fast, repeatable and need no API key.
  * What we test is OUR code: validation, saving, error mapping, and not calling the AI when not needed.
@@ -79,6 +72,22 @@ class AiTaskApiIntegrationTest {
         long id = ((Number) JsonPath.read(body, "$.id")).longValue();
         mockMvc.perform(get("/api/tasks/{id}", id).header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void createFromTextSavesTaskWithoutDateWhenClaudeDateIsInvalid() throws Exception {
+        when(aiClient.parseTask(eq(SENTENCE), any()))
+                .thenReturn(new ParsedTask("Dişçi randevusu", "", TaskPriority.HIGH, "2026-111"));
+
+        mockMvc.perform(post("/api/tasks/ai")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"text": "%s"}
+                                """.formatted(SENTENCE)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.dueDate").doesNotExist());
     }
 
     @Test
